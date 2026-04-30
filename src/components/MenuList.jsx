@@ -48,7 +48,7 @@ export default function MenuList({ categories, products, onAdd }) {
           )
           if (!catProducts.length) return null
           return (
-            <section key={cat.id} className={styles.category}>
+            <section key={cat.id} id={`cat-${cat.id}`} className={styles.category}>
               <h2 className={styles.categoryTitle}>{cat.name}</h2>
               <div className={styles.grid}>
                 {catProducts.map(p => (

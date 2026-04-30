@@ -1,11 +1,20 @@
 import styles from './Header.module.css'
 
-export default function Header({ settings, table, cartCount = 0, onCartOpen, onSearchOpen }) {
+export default function Header({ settings, table, cartCount = 0, onCartOpen, onSearchOpen, onMenuOpen }) {
   const logo  = settings?.logoUrl || settings?.logo || null
   const name  = settings?.businessName || settings?.displayName || 'Menú'
 
   return (
     <header className={styles.header}>
+      {/* Hamburguesa (izquierda) */}
+      <button className={styles.iconBtn} onClick={onMenuOpen} aria-label="Menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+
       {/* Logo / Nombre */}
       <div className={styles.left}>
         {logo

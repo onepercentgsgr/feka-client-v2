@@ -1,0 +1,14 @@
+{
+  "name": "FEKA Menú",
+  "short_name": "FEKA",
+  "description": "Pedidos en mesa y delivery — sin esperas.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF7043",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/feka_logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/feka_logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
