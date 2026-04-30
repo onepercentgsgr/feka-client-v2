@@ -1,49 +1,57 @@
 import styles from './Header.module.css'
 
-export default function Header({ settings, table, cartCount = 0, onCartOpen, onSearchOpen, onMenuOpen }) {
-  const logo  = settings?.config?.logo || settings?.logoUrl || settings?.logo || null
-  const name  = settings?.config?.businessName || settings?.displayName || settings?.name || 'Menú'
+export default function Header({
+  settings,
+  table,
+  onMenuOpen,
+  onFilterOpen,
+  onSearchOpen,
+}) {
+  const logo = settings?.config?.logo || settings?.logoUrl || settings?.logo || null
+  const name = settings?.config?.businessName || settings?.displayName || settings?.name || 'Menú'
 
   return (
     <header className={styles.header}>
-      {/* Hamburguesa (izquierda) */}
-      <button className={styles.iconBtn} onClick={onMenuOpen} aria-label="Menú">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-          <line x1="3" y1="6"  x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
 
-      {/* Logo / Nombre */}
+      {/* IZQUIERDA: hamburguesa + badge mesa */}
       <div className={styles.left}>
+        <button className={styles.iconBtn} onClick={onMenuOpen} aria-label="Menú">
+          <span className={styles.burger} />
+          <span className={styles.burger} />
+          <span className={styles.burger} />
+        </button>
+
+        {table && (
+          <div className={styles.mesaBadge}>
+            <span>🍽️</span>
+            <span>Mesa {table}</span>
+          </div>
+        )}
+      </div>
+
+      {/* CENTRO: logo o nombre */}
+      <div className={styles.center}>
         {logo
           ? <img src={logo} alt={name} className={styles.logo} />
           : <span className={styles.name}>{name}</span>
         }
       </div>
 
-      {/* Mesa (centro) */}
-      {table && (
-        <div className={styles.center}>
-          <span className={styles.tableBadge}>Mesa {table}</span>
-        </div>
-      )}
-
-      {/* Acciones (derecha) */}
+      {/* DERECHA: filtro + búsqueda */}
       <div className={styles.right}>
-        <button className={styles.iconBtn} onClick={onSearchOpen} aria-label="Buscar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <button className={styles.iconBtn} onClick={onFilterOpen} aria-label="Categorías">
+          {/* funnel icon */}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
           </svg>
         </button>
 
-        <button className={styles.cartBtn} onClick={onCartOpen} aria-label="Carrito">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        <button className={styles.iconBtn} onClick={onSearchOpen} aria-label="Buscar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
         </button>
       </div>
     </header>

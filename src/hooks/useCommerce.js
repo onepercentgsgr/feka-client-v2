@@ -13,6 +13,10 @@ function getParams() {
 function applyTheme(settings) {
   const color = settings?.primaryColor || settings?.config?.primaryColor || '#FF7043'
   document.documentElement.style.setProperty('--primary', color)
+  // Gradiente de fondo naranja→blanco (igual al V1)
+  document.documentElement.style.setProperty('--bg-gradient', 'linear-gradient(to bottom, rgb(255,220,190) 0%, #ffffff 100%)')
+  document.documentElement.style.setProperty('--header-bg', 'rgb(255,220,190)')
+  document.body.style.background = 'var(--bg-gradient)'
   const meta = document.getElementById('meta-theme-color')
   if (meta) meta.content = color
 }

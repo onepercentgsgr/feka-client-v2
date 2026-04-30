@@ -1,0 +1,47 @@
+/* ── Category Filter Bar — V1 match ── */
+
+.bar {
+  position: sticky;
+  top: 60px; /* debajo del header */
+  z-index: 98;
+  padding: 8px 16px;
+  background: var(--header-bg, #fff);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  animation: slideDown 0.2s ease-out;
+}
+.bar::-webkit-scrollbar { display: none; }
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.inner {
+  display: inline-flex;
+  gap: 8px;
+  padding-bottom: 2px;
+  white-space: nowrap;
+}
+
+.chip {
+  background: var(--card-bg, #ffece6);
+  color: var(--accent, #6D4C41);
+  border: 1px solid var(--card-border, #fecdb9);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.chip:active {
+  background: var(--primary, #FF7043);
+  color: white;
+  transform: scale(0.96);
+}

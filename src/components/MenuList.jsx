@@ -41,10 +41,29 @@ function sortByOrder(arr) {
   return [...arr].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
 }
 
-export default function MenuList({ categories, products, onAdd }) {
+export default function MenuList({ categories, products, onAdd, searchQuery = '' }) {
   const activeProducts = products.filter(
     p => p.active !== false && p.available !== false && p.outOfStock !== true
   )
+
+  // Búsqueda inline: filtrar y mostrar lista plana
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase()
+    const filtered = sortByOrder(activeProducts.filter(p =>
+      p.name?.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q)
+    ))
+    if (!filtered.length) {
+      return <p className={styles.empty}>Sin resultados para "{searchQuery}"</p>
+    }
+    return (
+      <div className={styles.container}>
+        <div className={styles.grid}>
+          {filtered.map(p => <ProductCard key={p.id} product={p} onAdd={onAdd} />)}
+        </div>
+      </div>
+    )
+  }
 
   if (!categories.length && !activeProducts.length) {
     return <p className={styles.empty}>El menú está vacío por ahora.</p>

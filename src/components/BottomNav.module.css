@@ -1,0 +1,46 @@
+/* ── Bottom Nav — V1 match ── */
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index: 300;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 12px;
+  color: #888;
+  font-family: inherit;
+  transition: color 0.2s, transform 0.2s;
+  min-width: 60px;
+}
+.item:active { transform: scale(0.92); }
+
+.item.active {
+  color: var(--primary, #FF7043);
+  transform: scale(1.1);
+}
+
+.emoji { font-size: 1.45rem; line-height: 1; }
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}

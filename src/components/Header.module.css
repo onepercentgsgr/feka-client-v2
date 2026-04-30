@@ -1,4 +1,4 @@
-/* ── Header — V1 visual match ── */
+/* ── Header V1 match ── */
 
 .header {
   position: sticky;
@@ -12,19 +12,39 @@
   background: var(--header-bg, #ffffff);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  gap: 8px;
-  transition: box-shadow 0.3s;
+  box-sizing: border-box;
 }
 
+/* LEFT — hamburger + mesa */
 .left {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
+/* CENTER — logo only */
+.center {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* RIGHT — filter + search */
+.right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+/* Logo centrado */
 .logo {
   max-height: 40px;
   max-width: 110px;
@@ -44,75 +64,49 @@
   text-overflow: ellipsis;
 }
 
-.center {
-  flex: 1;
+/* Mesa badge: fondo naranja, texto blanco */
+.mesaBadge {
   display: flex;
-  justify-content: center;
-}
-
-/* Mesa: fondo naranja claro, texto naranja — igual al V1 */
-.tableBadge {
-  background: #FFF5F2;
-  color: var(--primary, #FF7043);
-  font-size: 0.78rem;
+  align-items: center;
+  gap: 5px;
+  background: var(--primary, #FF7043);
+  border-radius: 20px;
+  padding: 5px 12px;
+  box-shadow: 0 2px 8px rgba(255, 112, 67, 0.35);
+  font-size: 0.8rem;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid #fde0d4;
+  color: white;
   white-space: nowrap;
 }
 
-.right {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
+/* Hamburguesa (3 líneas SVG reemplazado por spans) */
 .iconBtn {
-  width: 38px;
-  height: 38px;
+  width: 35px;
+  height: 35px;
   border: none;
   background: none;
   cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #555;
+  gap: 5px;
+  color: var(--text-color, #333);
   border-radius: 50%;
-  transition: background 0.15s;
+  padding: 6px;
+  transition: background 0.2s;
+  flex-shrink: 0;
 }
 .iconBtn:active { background: rgba(0,0,0,0.06); }
 
-.cartBtn {
-  position: relative;
-  width: 38px;
-  height: 38px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  border-radius: 50%;
-  transition: background 0.15s;
+/* Las 3 líneas del hamburger */
+.burger {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-color, #333);
+  border-radius: 2px;
 }
-.cartBtn:active { background: rgba(0,0,0,0.06); }
 
-.badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background: var(--primary, #FF7043);
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 800;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-}
+/* Cuando el iconBtn es de ícono SVG, no uses burger */
+.iconBtn svg { display: block; }

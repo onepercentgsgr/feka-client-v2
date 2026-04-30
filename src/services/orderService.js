@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore'
 import { signInAnonymously } from 'firebase/auth'
 import { db, auth } from './firebase'
 
@@ -83,6 +83,25 @@ export async function placeOrder({ commerceId, table, cartItems, notes, settings
   }
 
   return docRef
+}
+
+/**
+ * Llama al mozo — crea un doc en mozo_calls del comercio.
+ */
+export async function callWaiter({ commerceId, table, user }) {
+  let activeUser = user || auth.currentUser
+  if (!activeUser) {
+    const cred = await signInAnonymously(auth)
+    activeUser = cred.user
+  }
+  const callRef = doc(collection(db, 'feka_users', commerceId, 'mozo_calls'))
+  await setDoc(callRef, {
+    table: table || null,
+    clientId: activeUser.uid,
+    status: 'pending',
+    createdAt: serverTimestamp(),
+  })
+  return callRef
 }
 
 // ID de sesión anónima persistente (igual al original)

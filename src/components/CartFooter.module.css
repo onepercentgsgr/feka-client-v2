@@ -1,0 +1,54 @@
+/* ── Cart Footer — V1 match (barra naranja sobre el bottom nav) ── */
+
+.footer {
+  position: fixed;
+  bottom: 66px; /* justo arriba del bottom nav */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  background: linear-gradient(90deg, #FF763F 0%, #FF5A26 100%);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  z-index: 250;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -6px 20px rgba(255, 90, 38, 0.35);
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+
+.label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 1px;
+}
+
+.total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: white;
+}
+
+.btn {
+  background: white;
+  color: #FF5A26;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  font-family: inherit;
+  white-space: nowrap;
+  transition: transform 0.1s;
+}
+.btn:active { transform: scale(0.97); }

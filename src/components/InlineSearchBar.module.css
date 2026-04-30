@@ -1,0 +1,55 @@
+/* ── Inline Search Bar — V1 match ── */
+
+.bar {
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  padding: 8px 16px 10px;
+  background: var(--header-bg, #fff);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.inner {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 40px 10px 16px;
+  border-radius: 30px;
+  border: 1.5px solid var(--primary, #FF7043);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  background: white;
+  color: #333;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+.input:focus {
+  box-shadow: 0 0 0 3px rgba(255,112,67,0.12);
+}
+/* hide browser's default clear button */
+.input::-webkit-search-decoration,
+.input::-webkit-search-cancel-button { display: none; }
+
+.close {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+}
