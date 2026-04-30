@@ -7,7 +7,7 @@ const TABS = [
   { id: 'waiter',       emoji: '🙋‍♂️', label: '¡Mozo!'  },
 ]
 
-export default function BottomNav({ active = 'menu', onTab }) {
+export default function BottomNav({ active = 'menu', onTab, activeOrdersCount = 0 }) {
   return (
     <nav className={styles.nav}>
       {TABS.map(tab => (
@@ -17,7 +17,12 @@ export default function BottomNav({ active = 'menu', onTab }) {
           onClick={() => onTab?.(tab.id)}
           aria-label={tab.label}
         >
-          <span className={styles.emoji}>{tab.emoji}</span>
+          <span className={styles.emojiWrap}>
+            <span className={styles.emoji}>{tab.emoji}</span>
+            {tab.id === 'orders' && activeOrdersCount > 0 && (
+              <span className={styles.badge}>{activeOrdersCount}</span>
+            )}
+          </span>
           <span className={styles.label}>{tab.label}</span>
         </button>
       ))}

@@ -86,22 +86,39 @@ export async function placeOrder({ commerceId, table, cartItems, notes, settings
 }
 
 /**
- * Llama al mozo — crea un doc en mozo_calls del comercio.
+ * Llama al mozo — crea un pedido especial con isWaiterCall:true (igual que V1).
+ * message: texto opcional seleccionado (ej: "La cuenta", "Más agua", etc.)
  */
-export async function callWaiter({ commerceId, table, user }) {
+export async function callWaiter({ commerceId, table, user, message = '' }) {
   let activeUser = user || auth.currentUser
   if (!activeUser) {
     const cred = await signInAnonymously(auth)
     activeUser = cred.user
   }
-  const callRef = doc(collection(db, 'feka_users', commerceId, 'mozo_calls'))
-  await setDoc(callRef, {
-    table: table || null,
-    clientId: activeUser.uid,
-    status: 'pending',
+
+  const userId   = activeUser.uid
+  const userName = (user && user.displayName) ? user.displayName : 'Invitado'
+  const notes    = message
+    ? `🛎️ EL CLIENTE LLAMA AL MOZO — ${message}`
+    : '🛎️ EL CLIENTE LLAMA AL MOZO'
+
+  const docRef = await addDoc(collection(db, 'feka_users', commerceId, 'orders'), {
+    ...(table ? { table } : {}),
+    items: [],
+    total: 0,
+    commission: 0,
+    fekaCommissionAmount: 0,
+    fekaCommissionRate: 0,
+    status: 'requested',
+    paymentStatus: 'pending',
+    commissionStatus: 'none',
+    clientId: userId,
+    clientName: userName,
+    notes,
+    isWaiterCall: true,
     createdAt: serverTimestamp(),
   })
-  return callRef
+  return docRef
 }
 
 // ID de sesión anónima persistente (igual al original)

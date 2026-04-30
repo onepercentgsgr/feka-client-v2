@@ -96,15 +96,35 @@
 }
 .textarea:focus { border-color: var(--primary, #FF7043); }
 
-.confirmBtn {
+/* Pagar Ahora (verde) — acción principal */
+.payNowBtn {
   width: 100%;
-  padding: 14px;
-  background: var(--primary, #FF7043);
+  padding: 15px;
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
   color: white;
   border: none;
   border-radius: 14px;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: var(--font, sans-serif);
+  box-shadow: 0 6px 18px rgba(76,175,80,0.3);
+  margin-bottom: 8px;
+}
+.payNowBtn:active { opacity: 0.85; }
+.payNowBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Abonar luego (gris) — acción secundaria */
+.confirmBtn {
+  width: 100%;
+  padding: 13px;
+  background: #ddd;
+  color: #444;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
   font-family: var(--font, sans-serif);

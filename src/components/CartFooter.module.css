@@ -2,7 +2,7 @@
 
 .footer {
   position: fixed;
-  bottom: 66px; /* justo arriba del bottom nav */
+  bottom: calc(66px + env(safe-area-inset-bottom, 0px)); /* justo arriba del bottom nav */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  z-index: 250;
+  z-index: 100;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   box-shadow: 0 -6px 20px rgba(255, 90, 38, 0.35);

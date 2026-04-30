@@ -15,6 +15,9 @@ function ItemRow({ item }) {
       }
       <div className={styles.itemInfo}>
         <p className={styles.itemName}>{product.name}</p>
+        {product._variantLabel && (
+          <p className={styles.itemVariant}>{product._variantLabel}</p>
+        )}
         <p className={styles.itemUnit}>${unitPrice.toLocaleString('es-AR')} c/u</p>
       </div>
       <div className={styles.itemControls}>

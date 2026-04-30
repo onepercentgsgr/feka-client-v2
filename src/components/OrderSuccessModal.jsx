@@ -1,6 +1,6 @@
 import styles from './OrderSuccessModal.module.css'
 
-export default function OrderSuccessModal({ orderId, table, total, onClose }) {
+export default function OrderSuccessModal({ orderId, table, total, onClose, onViewOrders }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.card}>
@@ -13,10 +13,13 @@ export default function OrderSuccessModal({ orderId, table, total, onClose }) {
           <div className={styles.tableBadge}>Mesa {table}</div>
         )}
         <p style={{ fontSize: '0.8rem', color: '#bbb', marginBottom: 20 }}>
-          Total: ${total.toLocaleString('es-AR')}
+          Total: ${total?.toLocaleString('es-AR')}
         </p>
-        <button className={styles.btn} onClick={onClose}>
-          Volver al menú
+        <button className={styles.btn} onClick={onViewOrders || onClose}>
+          Ver estado del pedido 🧾
+        </button>
+        <button className={styles.btnSecondary} onClick={onClose}>
+          Seguir viendo el menú
         </button>
       </div>
     </div>

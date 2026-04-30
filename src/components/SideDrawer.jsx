@@ -83,6 +83,22 @@ export default function SideDrawer({ settings, categories, user, onClose, onSign
           )}
         </div>
 
+        {/* FEKA promo footer */}
+        <div className={styles.fekaPromo}>
+          <a
+            href="https://feka.click"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.fekaPromoLink}
+          >
+            <span className={styles.fekaPromoText}>
+              ¿Tenés un comercio?
+              <strong> Carta digital con IA, gratis</strong> →
+            </span>
+            <span className={styles.fekaPromoBadge}>feka.click</span>
+          </a>
+        </div>
+
         {/* User section */}
         <div className={styles.userSection}>
           {user ? (

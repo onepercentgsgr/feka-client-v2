@@ -12,7 +12,7 @@
   display: flex;
   justify-content: space-around;
   padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-  z-index: 300;
+  z-index: 50;
   box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
 }
 
@@ -37,7 +37,30 @@
   transform: scale(1.1);
 }
 
+.emojiWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .emoji { font-size: 1.45rem; line-height: 1; }
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #e53935;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 800;
+  border-radius: 50px;
+  padding: 1px 5px;
+  min-width: 16px;
+  text-align: center;
+  line-height: 14px;
+  border: 1.5px solid white;
+}
 
 .label {
   font-size: 0.72rem;

@@ -124,6 +124,42 @@
 }
 .catItem:hover, .catItem:active { background: #f5f5f5; }
 
+/* FEKA promo */
+.fekaPromo {
+  margin: 0 20px 14px;
+  flex-shrink: 0;
+}
+
+.fekaPromoLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #111;
+  border-radius: 14px;
+  padding: 12px 16px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s;
+}
+.fekaPromoLink:active { background: #1a1a1a; }
+
+.fekaPromoText {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.4;
+}
+.fekaPromoText strong { color: rgba(255,255,255,0.85); }
+
+.fekaPromoBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--primary, #FF7043);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
 /* User section */
 .userSection {
   padding: 14px 20px;
