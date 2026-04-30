@@ -1,46 +1,63 @@
+/* ── MenuList — V1 visual match ── */
+
 .container {
-  padding: 16px;
-  padding-bottom: 100px; /* espacio para el botón flotante del carrito */
+  padding: 16px 16px 140px 16px; /* espacio inferior para botón flotante + nav */
 }
 
 .empty {
   text-align: center;
-  color: #bbb;
-  padding: 60px 20px;
+  color: #999;
+  font-style: italic;
+  padding: 40px 20px;
   font-size: 0.9rem;
 }
 
-.category { margin-bottom: 32px; }
+/* ── Sección de categoría ── */
+.category { margin-bottom: 28px; }
 
 .categoryTitle {
-  font-size: 1rem;
+  color: var(--accent, #6D4C41);
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+  margin-bottom: 14px;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--primary, #FF7043);
-  display: inline-block;
+  letter-spacing: -0.5px;
 }
 
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* ── Tarjeta de producto ── */
+/* ── Tarjeta de producto (layout V1) ── */
 .card {
   display: flex;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
-  overflow: hidden;
-  min-height: 90px;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg, #ffece6);
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 15px 45px -5px rgba(0,0,0,0.20), 0 5px 20px -2px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+  gap: 10px;
 }
+.card:active { transform: scale(0.98); }
 
+/* Imagen 75×75 cuadrada a la izquierda */
 .cardImg {
-  width: 90px;
+  width: 75px;
+  height: 75px;
+  border-radius: 16px;
   flex-shrink: 0;
+  overflow: hidden;
+  background: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .cardImg img {
   width: 100%;
@@ -49,65 +66,66 @@
   display: block;
 }
 
+/* Texto en el centro */
 .cardBody {
   flex: 1;
-  padding: 10px 12px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-width: 0;
+  gap: 3px;
 }
 
 .cardName {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #222;
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-color, #2D2D2D);
+  line-height: 1.3;
 }
 
 .cardDesc {
-  font-size: 0.77rem;
-  color: #888;
-  font-style: italic;
-  white-space: nowrap;
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 6px;
 }
 
-.cardFooter {
+/* Precio + botón a la derecha */
+.cardAction {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 80px;
 }
 
 .cardPrice {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
-  color: var(--primary, #FF7043);
+  color: var(--text-color, #2D2D2D);
 }
 
 .addBtn {
   background: var(--primary, #FF7043);
   color: white;
   border: none;
-  border-radius: 20px;
-  padding: 5px 14px;
+  border-radius: 50px;
+  padding: 5px 12px;
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s;
   white-space: nowrap;
-  flex-shrink: 0;
+  transition: transform 0.1s;
+  font-family: inherit;
 }
-.addBtn:active { opacity: 0.75; }
+.addBtn:active { transform: scale(0.95); }
 
 .unavailable {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #bbb;
   font-style: italic;
+  text-align: right;
 }

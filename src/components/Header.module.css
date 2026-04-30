@@ -1,3 +1,5 @@
+/* ── Header — V1 visual match ── */
+
 .header {
   position: sticky;
   top: 0;
@@ -6,11 +8,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  height: 56px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  height: 60px;
+  background: var(--header-bg, #ffffff);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   gap: 8px;
+  transition: box-shadow 0.3s;
 }
 
 .left {
@@ -27,12 +32,13 @@
   height: auto;
   object-fit: contain;
   border-radius: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .name {
   font-weight: 700;
   font-size: 1rem;
-  color: var(--text, #333);
+  color: var(--text-color, #2D2D2D);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -44,13 +50,15 @@
   justify-content: center;
 }
 
+/* Mesa: fondo naranja claro, texto naranja — igual al V1 */
 .tableBadge {
-  background: var(--primary, #FF7043);
-  color: white;
-  font-size: 0.72rem;
+  background: #FFF5F2;
+  color: var(--primary, #FF7043);
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #fde0d4;
   white-space: nowrap;
 }
 
@@ -74,7 +82,7 @@
   border-radius: 50%;
   transition: background 0.15s;
 }
-.iconBtn:active { background: #f0f0f0; }
+.iconBtn:active { background: rgba(0,0,0,0.06); }
 
 .cartBtn {
   position: relative;
@@ -90,7 +98,7 @@
   border-radius: 50%;
   transition: background 0.15s;
 }
-.cartBtn:active { background: #f0f0f0; }
+.cartBtn:active { background: rgba(0,0,0,0.06); }
 
 .badge {
   position: absolute;

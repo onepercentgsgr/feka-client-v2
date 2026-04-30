@@ -9,12 +9,12 @@
   align-items: center;
   gap: 10px;
 
-  background: var(--primary, #FF7043);
+  background: linear-gradient(90deg, #FF763F 0%, #FF5A26 100%);
   color: white;
   border: none;
   border-radius: 50px;
-  padding: 14px 22px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+  padding: 14px 24px;
+  box-shadow: 0 8px 25px rgba(255, 90, 38, 0.45);
   cursor: pointer;
   white-space: nowrap;
 
