@@ -1,5 +1,6 @@
 import { collection, addDoc, serverTimestamp, doc, updateDoc, arrayUnion } from 'firebase/firestore'
-import { db } from './firebase'
+import { signInAnonymously } from 'firebase/auth'
+import { db, auth } from './firebase'
 
 /**
  * Convierte los items del CartContext al formato que espera Firestore/Admin.
@@ -30,8 +31,15 @@ export async function placeOrder({ commerceId, table, cartItems, notes, settings
   const rate = settings?.commissionRate ?? 1
   const commission = Math.round((total / (1 + rate / 100)) * (rate / 100))
 
-  const userId   = user ? user.uid  : _guestId()
-  const userName = user ? (user.displayName || 'Cliente') : 'Invitado'
+  // Si no hay sesión activa, autenticamos anónimamente (Firestore requiere auth para crear pedidos)
+  let activeUser = user || auth.currentUser
+  if (!activeUser) {
+    const cred = await signInAnonymously(auth)
+    activeUser = cred.user
+  }
+
+  const userId   = activeUser ? activeUser.uid  : _guestId()
+  const userName = (user && user.displayName) ? user.displayName : 'Invitado'
 
   const payload = {
     ...(table ? { table } : {}),

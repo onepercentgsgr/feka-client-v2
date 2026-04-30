@@ -30,7 +30,7 @@ export function useCommerce() {
     if (!commerceId) { setLoading(false); return }
 
     const unsub = onSnapshot(
-      doc(db, 'feka_users', commerceId),
+      doc(db, 'feka_users_public', commerceId),
       snap => {
         if (snap.exists()) {
           const data = snap.data()
@@ -61,7 +61,7 @@ export function useCommerce() {
   useEffect(() => {
     if (!commerceId) return
     const unsub = onSnapshot(
-      collection(db, 'feka_users', commerceId, 'menu_items'),
+      collection(db, 'feka_users', commerceId, 'menu_products'),
       snap => setProducts(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
       () => {}
     )
