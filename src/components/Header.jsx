@@ -1,8 +1,8 @@
 import styles from './Header.module.css'
 
 export default function Header({ settings, table, cartCount = 0, onCartOpen, onSearchOpen, onMenuOpen }) {
-  const logo  = settings?.logoUrl || settings?.logo || null
-  const name  = settings?.businessName || settings?.displayName || 'Menú'
+  const logo  = settings?.config?.logo || settings?.logoUrl || settings?.logo || null
+  const name  = settings?.config?.businessName || settings?.displayName || settings?.name || 'Menú'
 
   return (
     <header className={styles.header}>

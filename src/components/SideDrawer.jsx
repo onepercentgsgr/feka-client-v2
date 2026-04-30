@@ -12,9 +12,9 @@ export default function SideDrawer({ settings, categories, user, onClose, onSign
     onClose()
   }
 
-  const hours = settings?.openingHours || settings?.hours || ''
-  const instagram = settings?.instagram || settings?.instagramUrl || ''
-  const whatsapp = settings?.whatsapp || settings?.whatsappNumber || ''
+  const hours = settings?.config?.openingHours || settings?.openingHours || settings?.hours || ''
+  const instagram = settings?.config?.instagram || settings?.instagram || settings?.instagramUrl || ''
+  const whatsapp = settings?.config?.whatsapp || settings?.whatsapp || settings?.whatsappNumber || ''
 
   return (
     <>
@@ -24,10 +24,13 @@ export default function SideDrawer({ settings, categories, user, onClose, onSign
         {/* Hero */}
         <div className={styles.hero}>
           <button className={styles.heroClose} onClick={onClose} aria-label="Cerrar">✕</button>
-          {settings?.logoUrl && (
-            <img className={styles.heroLogo} src={settings.logoUrl} alt={settings.name} />
+          {(settings?.config?.logo || settings?.logoUrl) && (
+            <img className={styles.heroLogo}
+              src={settings.config?.logo || settings.logoUrl}
+              alt={settings.config?.businessName || settings.displayName || 'Menú'}
+            />
           )}
-          <h2 className={styles.heroName}>{settings?.name || 'Menú'}</h2>
+          <h2 className={styles.heroName}>{settings?.config?.businessName || settings?.displayName || settings?.name || 'Menú'}</h2>
           {hours && <p className={styles.heroHours}>{hours}</p>}
         </div>
 

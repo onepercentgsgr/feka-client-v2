@@ -7,7 +7,7 @@ function sanitize(str) {
 function ProductCard({ product, onAdd }) {
   const price = product.price || 0
   const hasImg = !!product.imgUrl
-  const isAvailable = product.active !== false
+  const isAvailable = product.active !== false && product.available !== false
 
   return (
     <div className={styles.card}>
@@ -44,7 +44,7 @@ export default function MenuList({ categories, products, onAdd }) {
       <div className={styles.container}>
         {categories.map(cat => {
           const catProducts = products.filter(p =>
-            p.categoryId === cat.id && p.active !== false
+            p.categoryId === cat.id && p.active !== false && p.available !== false
           )
           if (!catProducts.length) return null
           return (
@@ -66,7 +66,7 @@ export default function MenuList({ categories, products, onAdd }) {
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
-        {products.filter(p => p.active !== false).map(p => (
+        {products.filter(p => p.active !== false && p.available !== false).map(p => (
           <ProductCard key={p.id} product={p} onAdd={onAdd} />
         ))}
       </div>

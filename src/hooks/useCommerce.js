@@ -11,7 +11,7 @@ function getParams() {
 }
 
 function applyTheme(settings) {
-  const color = settings?.primaryColor || '#FF7043'
+  const color = settings?.primaryColor || settings?.config?.primaryColor || '#FF7043'
   document.documentElement.style.setProperty('--primary', color)
   const meta = document.getElementById('meta-theme-color')
   if (meta) meta.content = color
