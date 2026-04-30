@@ -1,58 +1,50 @@
-import { useEffect, useState } from 'react'
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '../services/firebase'
-
-// Lee ?commerce=xxx de la URL
-function getCommerceId() {
-  const p = new URLSearchParams(window.location.search)
-  return p.get('commerce') || p.get('qr') || null
-}
+import { useState } from 'react'
+import { useCommerce } from '../hooks/useCommerce'
+import SplashScreen from '../components/SplashScreen'
+import Header from '../components/Header'
+import MenuList from '../components/MenuList'
 
 export default function MenuPage() {
-  const [commerce, setCommerce] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState(null)
+  const { commerceId, table, settings, categories, products, loading, error } = useCommerce()
+  const [cart, setCart] = useState([])
 
-  const commerceId = getCommerceId()
-
-  useEffect(() => {
-    if (!commerceId) { setLoading(false); return }
-
-    getDoc(doc(db, 'feka_users', commerceId))
-      .then(snap => {
-        if (snap.exists()) setCommerce(snap.data())
-        else setError('Comercio no encontrado')
-      })
-      .catch(() => setError('Error al cargar el menú'))
-      .finally(() => setLoading(false))
-  }, [commerceId])
+  function addToCart(product) {
+    setCart(prev => [...prev, product])
+    // vibración leve en móvil
+    try { if (navigator.vibrate) navigator.vibrate(40) } catch (_) {}
+  }
 
   if (!commerceId) return (
-    <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-      Escaneá el QR del comercio para ver el menú.
+    <div style={{ padding: '60px 20px', textAlign: 'center', color: '#999' }}>
+      <p style={{ fontSize: '2rem', marginBottom: '12px' }}>📱</p>
+      <p>Escaneá el QR del comercio para ver el menú.</p>
     </div>
   )
 
-  if (loading) return (
-    <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-      Cargando menú...
-    </div>
-  )
+  if (loading) return <SplashScreen />
 
   if (error) return (
-    <div style={{ padding: '40px', textAlign: 'center', color: '#e53935' }}>
-      {error}
+    <div style={{ padding: '60px 20px', textAlign: 'center', color: '#e53935' }}>
+      <p style={{ fontSize: '2rem', marginBottom: '12px' }}>⚠️</p>
+      <p>{error}</p>
     </div>
   )
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'var(--font)' }}>
-      <h1 style={{ color: 'var(--primary)' }}>
-        {commerce?.businessName || commerce?.displayName || 'Menú'}
-      </h1>
-      <p style={{ color: '#888', marginTop: '8px' }}>
-        — Menú en construcción —
-      </p>
+    <div>
+      <Header
+        settings={settings}
+        table={table}
+        cartCount={cart.length}
+        onCartOpen={() => {}}
+        onSearchOpen={() => {}}
+      />
+
+      <MenuList
+        categories={categories}
+        products={products}
+        onAdd={addToCart}
+      />
     </div>
   )
 }
