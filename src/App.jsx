@@ -1,11 +1,14 @@
 import { Routes, Route } from 'react-router-dom'
+import { CartProvider } from './context/CartContext'
 import MenuPage from './pages/MenuPage'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MenuPage />} />
-    </Routes>
+    <CartProvider>
+      <Routes>
+        <Route path="/" element={<MenuPage />} />
+      </Routes>
+    </CartProvider>
   )
 }
 

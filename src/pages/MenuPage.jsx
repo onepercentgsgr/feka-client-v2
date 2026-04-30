@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import { useCommerce } from '../hooks/useCommerce'
+import { useCart } from '../context/CartContext'
 import SplashScreen from '../components/SplashScreen'
 import Header from '../components/Header'
 import MenuList from '../components/MenuList'
+import CartModal from '../components/CartModal'
+import FloatingCartBtn from '../components/FloatingCartBtn'
 
 export default function MenuPage() {
   const { commerceId, table, settings, categories, products, loading, error } = useCommerce()
-  const [cart, setCart] = useState([])
+  const { addItem, totalItems } = useCart()
+  const [cartOpen, setCartOpen] = useState(false)
 
-  function addToCart(product) {
-    setCart(prev => [...prev, product])
-    // vibración leve en móvil
-    try { if (navigator.vibrate) navigator.vibrate(40) } catch (_) {}
+  function handleOrder() {
+    // TODO: flujo de confirmación de pedido
+    alert('¡Pedido en camino! (próximamente)')
   }
 
   if (!commerceId) return (
@@ -35,16 +38,25 @@ export default function MenuPage() {
       <Header
         settings={settings}
         table={table}
-        cartCount={cart.length}
-        onCartOpen={() => {}}
+        cartCount={totalItems}
+        onCartOpen={() => setCartOpen(true)}
         onSearchOpen={() => {}}
       />
 
       <MenuList
         categories={categories}
         products={products}
-        onAdd={addToCart}
+        onAdd={addItem}
       />
+
+      <FloatingCartBtn onClick={() => setCartOpen(true)} />
+
+      {cartOpen && (
+        <CartModal
+          onClose={() => setCartOpen(false)}
+          onOrder={handleOrder}
+        />
+      )}
     </div>
   )
 }
