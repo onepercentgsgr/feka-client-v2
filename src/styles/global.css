@@ -1,0 +1,23 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Variables FEKA (se sobreescriben por comercio al cargar) ── */
+:root {
+  --primary: #FF7043;
+  --primary-dark: #E64A19;
+  --bg: #ffffff;
+  --text: #333333;
+  --font: 'Outfit', sans-serif;
+}
+
+html, body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Google Font ── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
