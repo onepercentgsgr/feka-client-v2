@@ -5,19 +5,28 @@ import { showToast } from '../components/Toast'
 import styles from './ReservationsView.module.css'
 
 const STATUS_LABEL = {
-  pending:          'Pendiente',
-  confirmed:        'Confirmada',
-  cancelled:        'Cancelada',
-  rejected:         'Rechazada',
-  awaiting_deposit: '💰 Seña Requerida',
+  pending:            'Pendiente',
+  confirmed:          'Confirmada',
+  approved:           'Confirmada',
+  cancelled:          'Cancelada',
+  rejected:           'Rechazada',
+  cancelled_by_client:'Cancelada por vos',
+  no_show:            'Ausente',
+  awaiting_deposit:   '💰 Seña Requerida',
 }
 const STATUS_CLASS = {
-  pending:          'badge--pending',
-  confirmed:        'badge--confirmed',
-  cancelled:        'badge--cancelled',
-  rejected:         'badge--cancelled',
-  awaiting_deposit: 'badge--deposit',
+  pending:            'badge--pending',
+  confirmed:          'badge--confirmed',
+  approved:           'badge--confirmed',
+  cancelled:          'badge--cancelled',
+  rejected:           'badge--cancelled',
+  cancelled_by_client:'badge--cancelled',
+  no_show:            'badge--noshow',
+  awaiting_deposit:   'badge--deposit',
 }
+
+const CANCELLABLE = new Set(['pending', 'approved', 'awaiting_deposit'])
+const IS_CANCELLED = s => ['cancelled', 'cancelled_by_client', 'rejected', 'no_show'].includes(s)
 
 /* ── Modal de pago de seña ── */
 function DepositModal({ resId, commerceId, amount, expiresAt, notifiedAlready, onClose }) {
@@ -131,8 +140,9 @@ function DepositModal({ resId, commerceId, amount, expiresAt, notifiedAlready, o
 }
 
 function ReservationCard({ resId, onStatusLoad }) {
-  const [res, setRes] = useState(null)
+  const [res,         setRes]         = useState(null)
   const [depositOpen, setDepositOpen] = useState(false)
+  const [cancelling,  setCancelling]  = useState(false)
 
   useEffect(() => {
     if (!resId) return
@@ -164,7 +174,30 @@ function ReservationCard({ resId, onStatusLoad }) {
   const time    = res.time || ''
   const guests  = res.people || res.guests || res.partySize || ''
 
-  const isDeposit = status === 'awaiting_deposit'
+  const isDeposit   = status === 'awaiting_deposit'
+  const isApproved  = status === 'approved' || status === 'confirmed'
+  const isCancelled = IS_CANCELLED(status)
+  const canCancel   = CANCELLABLE.has(status)
+
+  async function handleCancel() {
+    if (!window.confirm('¿Cancelar esta reserva?')) return
+    setCancelling(true)
+    try {
+      await updateDoc(doc(db, 'feka_reservations', resId), { status: 'cancelled_by_client' })
+      showToast('Reserva cancelada', 'success')
+    } catch {
+      showToast('No se pudo cancelar. Intentá de nuevo.', 'error')
+      setCancelling(false)
+    }
+  }
+
+  function handleStartOrder() {
+    const merchantId = res.merchantId
+    const tableNum   = res.assignedTableNumber
+    if (!merchantId || !tableNum) return
+    const base = window.location.origin + window.location.pathname
+    window.location.href = `${base}?commerce=${merchantId}&table=${tableNum}`
+  }
 
   return (
     <>
@@ -178,6 +211,21 @@ function ReservationCard({ resId, onStatusLoad }) {
         {guests ? <p className={styles.guests}>👥 {guests} personas</p> : null}
         {res.notes ? <p className={styles.notes}>📝 {res.notes}</p> : null}
 
+        {/* Sección confirmada */}
+        {isApproved && (
+          <div className={styles.confirmedSection}>
+            <p className={styles.confirmedMsg}>✅ ¡Tu lugar está confirmado!</p>
+            {res.assignedTableNumber && (
+              <>
+                <p className={styles.confirmedTable}>🍽️ Mesa Asignada: {res.assignedTableNumber}</p>
+                <button className={styles.orderBtn} onClick={handleStartOrder}>
+                  🍽️ ¡Hacer Pedido en Mesa {res.assignedTableNumber}!
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Bloque de seña — solo cuando el admin la solicitó */}
         {isDeposit && (
           <div className={`${styles.depositBlock} ${res.depositPaid ? styles.depositBlockPaid : ''}`}>
@@ -189,13 +237,23 @@ function ReservationCard({ resId, onStatusLoad }) {
               <p className={styles.depositNotifiedMsg}>⏳ Pago avisado — esperando verificación del comercio</p>
             )}
             {!res.depositPaid && !res.depositNotified && (
-              <button
-                className={styles.depositBtn}
-                onClick={() => setDepositOpen(true)}
-              >
+              <button className={styles.depositBtn} onClick={() => setDepositOpen(true)}>
                 💳 Abonar seña ${(res.depositAmount || 0).toLocaleString('es-AR')}
               </button>
             )}
+          </div>
+        )}
+
+        {/* Cancelar — solo para estados activos */}
+        {canCancel && (
+          <div className={styles.cancelRow}>
+            <button
+              className={styles.cancelBtn}
+              onClick={handleCancel}
+              disabled={cancelling}
+            >
+              {cancelling ? 'Cancelando…' : 'Cancelar Reserva'}
+            </button>
           </div>
         )}
       </div>
@@ -443,7 +501,8 @@ export default function ReservationsView({ commerceId, user, settings, onBack })
     const s = loadedStatuses[id]
     if (s === undefined) return true   // todavía cargando, mostrarlo
     if (statusFilter === 'pending')   return s === 'pending' || s === 'awaiting_deposit'
-    if (statusFilter === 'cancelled') return s === 'cancelled' || s === 'rejected'
+    if (statusFilter === 'confirmed') return s === 'confirmed' || s === 'approved'
+    if (statusFilter === 'cancelled') return IS_CANCELLED(s)
     return s === statusFilter
   }
 

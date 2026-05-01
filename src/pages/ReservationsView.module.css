@@ -78,8 +78,9 @@
 }
 .badge--pending   { background: #FFA726; }
 .badge--confirmed { background: #66BB6A; }
-.badge--cancelled { background: #EF5350; }
+.badge--cancelled { background: #9E9E9E; }
 .badge--deposit   { background: #FF7043; }
+.badge--noshow    { background: #607D8B; }
 
 .dateTime {
   font-size: 0.85rem;
@@ -112,6 +113,64 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* ── Sección confirmada (approved) ── */
+.confirmedSection {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.confirmedMsg {
+  font-size: 0.85rem;
+  color: #4CAF50;
+  font-weight: 600;
+  margin: 0;
+}
+.confirmedTable {
+  font-weight: 700;
+  color: #2E7D32;
+  font-size: 0.9rem;
+  margin: 0;
+}
+.orderBtn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #FFB74D, #FF9800);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 15px rgba(255,152,0,0.4);
+  transition: opacity 0.15s;
+}
+.orderBtn:active { opacity: 0.85; }
+
+/* ── Botón cancelar reserva ── */
+.cancelRow {
+  margin-top: 12px;
+  text-align: right;
+}
+.cancelBtn {
+  background: transparent;
+  color: #f44336;
+  border: 1px solid #f44336;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.cancelBtn:hover  { background: #fff5f5; }
+.cancelBtn:active { opacity: 0.75; }
+.cancelBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Bloque de seña en tarjeta ── */
 .depositBlock {
