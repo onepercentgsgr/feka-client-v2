@@ -1,24 +1,138 @@
 import { useEffect, useState } from 'react'
-import { doc, onSnapshot, addDoc, collection, serverTimestamp, query, where, getDocs } from 'firebase/firestore'
+import { doc, onSnapshot, addDoc, collection, serverTimestamp, query, where, getDocs, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '../services/firebase'
 import { showToast } from '../components/Toast'
 import styles from './ReservationsView.module.css'
 
 const STATUS_LABEL = {
-  pending:   'Pendiente',
-  confirmed: 'Confirmada',
-  cancelled: 'Cancelada',
-  rejected:  'Rechazada',
+  pending:          'Pendiente',
+  confirmed:        'Confirmada',
+  cancelled:        'Cancelada',
+  rejected:         'Rechazada',
+  awaiting_deposit: '💰 Seña Requerida',
 }
 const STATUS_CLASS = {
-  pending:   'badge--pending',
-  confirmed: 'badge--confirmed',
-  cancelled: 'badge--cancelled',
-  rejected:  'badge--cancelled',
+  pending:          'badge--pending',
+  confirmed:        'badge--confirmed',
+  cancelled:        'badge--cancelled',
+  rejected:         'badge--cancelled',
+  awaiting_deposit: 'badge--deposit',
+}
+
+/* ── Modal de pago de seña ── */
+function DepositModal({ resId, commerceId, amount, expiresAt, notifiedAlready, onClose }) {
+  const [alias,     setAlias]     = useState('Cargando…')
+  const [holder,    setHolder]    = useState('Cargando…')
+  const [notified,  setNotified]  = useState(notifiedAlready || false)
+  const [notifying, setNotifying] = useState(false)
+  const [hasError,  setHasError]  = useState(false)
+
+  useEffect(() => {
+    if (!commerceId) return
+    getDoc(doc(db, 'feka_users_public', commerceId))
+      .then(snap => {
+        if (snap.exists()) {
+          const cfg = snap.data().config || {}
+          setAlias(cfg.alias  || 'No configurado')
+          setHolder(cfg.holder || 'No configurado')
+        }
+      })
+      .catch(() => { setAlias('—'); setHolder('—') })
+  }, [commerceId])
+
+  // Calcular vencimiento
+  const expiryText = (() => {
+    if (!expiresAt) return null
+    const ms   = expiresAt.toMillis ? expiresAt.toMillis() : (expiresAt.seconds * 1000)
+    const diff = ms - Date.now()
+    if (diff <= 0) return '⛔ Plazo vencido — la reserva será cancelada'
+    const h = Math.floor(diff / 3600000)
+    const m = Math.floor((diff % 3600000) / 60000)
+    const isUrgent = diff < 3600000
+    return `⏳ Vence en ${h > 0 ? h + 'h ' : ''}${m}min${isUrgent ? ' — ¡Último momento!' : ''}`
+  })()
+
+  async function handleNotify() {
+    setNotifying(true)
+    setHasError(false)
+    try {
+      await updateDoc(doc(db, 'feka_reservations', resId), {
+        depositNotified:   true,
+        depositNotifiedAt: serverTimestamp(),
+      })
+      setNotified(true)
+    } catch {
+      setHasError(true)
+    } finally {
+      setNotifying(false)
+    }
+  }
+
+  return (
+    <div className={styles.depositOverlay} onClick={onClose}>
+      <div className={styles.depositModal} onClick={e => e.stopPropagation()}>
+
+        <div className={styles.depositHeader}>
+          <p style={{ fontSize: '2.5rem', margin: 0 }}>💰</p>
+          <h3 className={styles.depositTitle}>Abonar Seña</h3>
+          <p className={styles.depositSubtitle}>Necesaria para confirmar tu reserva</p>
+        </div>
+
+        <div className={styles.depositAmountBox}>
+          <p className={styles.depositAmountLabel}>Total a abonar</p>
+          <p className={styles.depositAmount}>${(amount || 0).toLocaleString('es-AR')}</p>
+          {expiryText && (
+            <p className={`${styles.depositExpiry} ${expiryText.startsWith('⛔') ? styles.depositExpiryUrgent : ''}`}>
+              {expiryText}
+            </p>
+          )}
+        </div>
+
+        <div className={styles.depositBankBox}>
+          <p className={styles.depositBankTitle}>🏦 Transferencia bancaria</p>
+          <div className={styles.depositBankRow}>
+            <span>Alias</span>
+            <strong>{alias}</strong>
+          </div>
+          <div className={styles.depositBankRow}>
+            <span>Titular</span>
+            <span>{holder}</span>
+          </div>
+        </div>
+
+        {notified ? (
+          <div className={styles.depositSuccess}>
+            ✅ ¡Aviso enviado! El comercio verificará tu pago y confirmará la reserva.
+          </div>
+        ) : (
+          <button
+            className={styles.depositNotifyBtn}
+            onClick={handleNotify}
+            disabled={notifying}
+          >
+            {notifying ? 'Enviando…' : '💸 Ya pagué — Avisar al comercio'}
+          </button>
+        )}
+
+        {hasError && (
+          <div className={styles.depositError}>
+            ⚠️ No se pudo enviar el aviso. Verificá tu conexión e intentá de nuevo.
+          </div>
+        )}
+
+        <div className={styles.depositInfo}>
+          ℹ️ Hacé la transferencia al alias indicado y avisá al comercio. Cuando verifiquen el pago, la reserva queda confirmada.
+        </div>
+
+        <button className={styles.depositCloseBtn} onClick={onClose}>Cerrar</button>
+      </div>
+    </div>
+  )
 }
 
 function ReservationCard({ resId, onStatusLoad }) {
   const [res, setRes] = useState(null)
+  const [depositOpen, setDepositOpen] = useState(false)
 
   useEffect(() => {
     if (!resId) return
@@ -50,17 +164,53 @@ function ReservationCard({ resId, onStatusLoad }) {
   const time    = res.time || ''
   const guests  = res.people || res.guests || res.partySize || ''
 
+  const isDeposit = status === 'awaiting_deposit'
+
   return (
-    <div className={styles.card}>
-      <div className={styles.cardTop}>
-        <span className={`${styles.badge} ${styles[STATUS_CLASS[status] || 'badge--pending']}`}>
-          {STATUS_LABEL[status] || status}
-        </span>
-        <span className={styles.dateTime}>{date}{time ? ` · ${time}` : ''}</span>
+    <>
+      <div className={styles.card}>
+        <div className={styles.cardTop}>
+          <span className={`${styles.badge} ${styles[STATUS_CLASS[status] || 'badge--pending']}`}>
+            {STATUS_LABEL[status] || status}
+          </span>
+          <span className={styles.dateTime}>{date}{time ? ` · ${time}` : ''}</span>
+        </div>
+        {guests ? <p className={styles.guests}>👥 {guests} personas</p> : null}
+        {res.notes ? <p className={styles.notes}>📝 {res.notes}</p> : null}
+
+        {/* Bloque de seña — solo cuando el admin la solicitó */}
+        {isDeposit && (
+          <div className={`${styles.depositBlock} ${res.depositPaid ? styles.depositBlockPaid : ''}`}>
+            <div className={styles.depositBlockRow}>
+              <span>{res.depositPaid ? '✅ Seña abonada' : '💰 Seña requerida'}</span>
+              <strong>${(res.depositAmount || 0).toLocaleString('es-AR')}</strong>
+            </div>
+            {!res.depositPaid && res.depositNotified && (
+              <p className={styles.depositNotifiedMsg}>⏳ Pago avisado — esperando verificación del comercio</p>
+            )}
+            {!res.depositPaid && !res.depositNotified && (
+              <button
+                className={styles.depositBtn}
+                onClick={() => setDepositOpen(true)}
+              >
+                💳 Abonar seña ${(res.depositAmount || 0).toLocaleString('es-AR')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
-      {guests ? <p className={styles.guests}>👥 {guests} personas</p> : null}
-      {res.notes ? <p className={styles.notes}>📝 {res.notes}</p> : null}
-    </div>
+
+      {depositOpen && (
+        <DepositModal
+          resId={resId}
+          commerceId={res.merchantId}
+          amount={res.depositAmount}
+          expiresAt={res.depositExpiresAt}
+          notifiedAlready={res.depositNotified}
+          onClose={() => setDepositOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -292,6 +442,7 @@ export default function ReservationsView({ commerceId, user, settings, onBack })
     if (statusFilter === 'all') return true
     const s = loadedStatuses[id]
     if (s === undefined) return true   // todavía cargando, mostrarlo
+    if (statusFilter === 'pending')   return s === 'pending' || s === 'awaiting_deposit'
     if (statusFilter === 'cancelled') return s === 'cancelled' || s === 'rejected'
     return s === statusFilter
   }

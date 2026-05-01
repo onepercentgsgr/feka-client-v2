@@ -79,6 +79,7 @@
 .badge--pending   { background: #FFA726; }
 .badge--confirmed { background: #66BB6A; }
 .badge--cancelled { background: #EF5350; }
+.badge--deposit   { background: #FF7043; }
 
 .dateTime {
   font-size: 0.85rem;
@@ -110,6 +111,207 @@
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
+}
+
+/* ── Bloque de seña en tarjeta ── */
+.depositBlock {
+  margin-top: 10px;
+  background: #FFF8E1;
+  border: 1px solid #FFD54F;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.depositBlockPaid {
+  background: #F1F8E9;
+  border-color: #A5D6A7;
+}
+.depositBlockRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  color: #555;
+}
+.depositBlockRow strong {
+  font-size: 1rem;
+  color: #E65100;
+  font-weight: 800;
+}
+.depositNotifiedMsg {
+  font-size: 0.8rem;
+  color: #F57C00;
+  font-weight: 600;
+  margin: 0;
+}
+.depositBtn {
+  background: linear-gradient(135deg, #FF7043, #D84315);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  box-shadow: 0 3px 10px rgba(255,112,67,0.3);
+  transition: opacity 0.15s;
+}
+.depositBtn:active { opacity: 0.85; }
+
+/* ── Modal de seña ── */
+.depositOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.depositModal {
+  background: #fff;
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.depositHeader {
+  text-align: center;
+}
+.depositTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 4px 0 0;
+}
+.depositSubtitle {
+  font-size: 0.82rem;
+  color: #888;
+  margin: 4px 0 0;
+}
+.depositAmountBox {
+  text-align: center;
+  background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+  border: 1px solid #FFD54F;
+  border-radius: 16px;
+  padding: 18px;
+}
+.depositAmountLabel {
+  font-size: 0.78rem;
+  color: #E65100;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+}
+.depositAmount {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #E65100;
+  letter-spacing: -1px;
+  margin: 0;
+}
+.depositExpiry {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 6px 0 0;
+}
+.depositExpiryUrgent {
+  color: #F44336;
+  font-weight: 700;
+}
+.depositBankBox {
+  background: #F8F9FA;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.depositBankTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #333;
+  margin: 0;
+}
+.depositBankRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #888;
+}
+.depositBankRow strong {
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+.depositNotifyBtn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #43A047, #2E7D32);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 15px rgba(46,125,50,0.35);
+  transition: opacity 0.15s;
+}
+.depositNotifyBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+.depositNotifyBtn:not(:disabled):active { opacity: 0.85; }
+.depositSuccess {
+  background: #E8F5E9;
+  border: 1px solid #A5D6A7;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 0.88rem;
+  color: #2E7D32;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+}
+.depositError {
+  background: #FFEBEE;
+  border: 1px solid #EF9A9A;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #C62828;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+}
+.depositInfo {
+  background: #FFF8E1;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  color: #E65100;
+  line-height: 1.5;
+}
+.depositCloseBtn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+  font-family: inherit;
+  align-self: center;
 }
 
 /* ── Status filter tabs ── */
