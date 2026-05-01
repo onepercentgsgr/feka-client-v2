@@ -70,7 +70,7 @@ function DietaryChips({ dietary }) {
   )
 }
 
-function ProductCard({ product, onAdd, rate, activeDietFilters }) {
+function ProductCard({ product, onAdd, rate, activeDietFilters, showDietaryChips }) {
   const [viewerUrl, setViewerUrl] = useState(null)
   const [videoOpen, setVideoOpen]   = useState(false)
 
@@ -149,8 +149,8 @@ function ProductCard({ product, onAdd, rate, activeDietFilters }) {
             <p className={styles.cardDesc}>{product.description}</p>
           )}
 
-          {/* Chips dietarios (visibles siempre si los tiene) */}
-          <DietaryChips dietary={product.dietary} />
+          {/* Chips dietarios — solo cuando el filtro está abierto o hay filtros activos */}
+          {showDietaryChips && <DietaryChips dietary={product.dietary} />}
 
           {/* Badge stock bajo */}
           {lowStockBadge}
@@ -228,7 +228,7 @@ function sortByOrder(arr) {
   return [...arr].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
 }
 
-export default function MenuList({ categories, products, onAdd, searchQuery = '', commissionRate = 0, activeDietFilters }) {
+export default function MenuList({ categories, products, onAdd, searchQuery = '', commissionRate = 0, activeDietFilters, showDietaryChips = false }) {
   const rate = commissionRate
 
   const activeProducts = products.filter(
@@ -254,6 +254,7 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
               onAdd={onAdd}
               rate={rate}
               activeDietFilters={activeDietFilters}
+              showDietaryChips={showDietaryChips}
             />
           ))}
         </div>
@@ -284,6 +285,7 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
                     onAdd={onAdd}
                     rate={rate}
                     activeDietFilters={activeDietFilters}
+                    showDietaryChips={showDietaryChips}
                   />
                 ))}
               </div>
@@ -304,6 +306,7 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
             onAdd={onAdd}
             rate={rate}
             activeDietFilters={activeDietFilters}
+            showDietaryChips={showDietaryChips}
           />
         ))}
       </div>

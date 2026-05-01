@@ -245,6 +245,7 @@ export default function MenuPage() {
           searchQuery={searchQuery}
           commissionRate={commissionRate}
           activeDietFilters={dietFilters}
+          showDietaryChips={filterOpen || dietFilters.size > 0}
         />
         <CartFooter onOpen={() => setCartOpen(true)} />
       </>
