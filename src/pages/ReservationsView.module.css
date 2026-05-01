@@ -1,0 +1,309 @@
+/* ── ReservationsView ── */
+
+.container {
+  padding: 16px 16px 180px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent, #6D4C41);
+  margin: 0;
+}
+
+.backBtn {
+  background: transparent;
+  border: 1.5px solid #ddd;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.newBtn {
+  background: var(--primary, #FF7043);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Existing reservation cards */
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+  background: var(--card-bg, #ffece6);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.9);
+  box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.loading {
+  color: #aaa;
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+.badge--pending   { background: #FFA726; }
+.badge--confirmed { background: #66BB6A; }
+.badge--cancelled { background: #EF5350; }
+
+.dateTime {
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 600;
+}
+
+.guests, .notes {
+  font-size: 0.82rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 50px 20px 0;
+  color: #999;
+}
+
+.newBtnLarge {
+  margin-top: 18px;
+  background: var(--primary, #FF7043);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── Status filter tabs ── */
+.filterTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+  scrollbar-width: none;
+}
+.filterTabs::-webkit-scrollbar { display: none; }
+
+.filterTab {
+  flex-shrink: 0;
+  background: #f5f5f5;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.filterTabActive {
+  background: var(--primary, #FF7043);
+  border-color: var(--primary, #FF7043);
+  color: #fff;
+}
+
+.filterEmpty {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.88rem;
+  padding: 30px 0;
+}
+
+/* ── Reservation Form ── */
+.formCard {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.formTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.formClose {
+  width: 32px; height: 32px;
+  border: none; background: #f4f4f4;
+  border-radius: 50%; cursor: pointer;
+  font-size: 1rem; color: #555;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.field {
+  padding: 14px 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+.field:last-of-type { padding-bottom: 4px; }
+
+.fieldLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.input {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 0.92rem;
+  color: #333;
+  font-family: inherit;
+  outline: none;
+  background: #fafafa;
+  box-sizing: border-box;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--primary, #FF7043); background: #fff; }
+
+.hint {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+  margin-top: 14px;
+}
+.row .field {
+  padding: 0;
+  flex: 1;
+}
+
+/* Pax buttons */
+.paxRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.paxBtn {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  padding: 0 14px;
+}
+
+.paxSelected {
+  background: var(--primary, #FF7043);
+  color: #fff;
+  border-color: var(--primary, #FF7043);
+}
+
+.submitBtn {
+  display: block;
+  width: calc(100% - 40px);
+  margin: 20px 20px;
+  padding: 14px;
+  background: var(--primary, #FF7043);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 14px rgba(255,112,67,0.3);
+  transition: opacity 0.15s;
+}
+.submitBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+.submitBtn:not(:disabled):active { opacity: 0.85; }
+
+/* Success card */
+.successCard {
+  text-align: center;
+  padding: 50px 30px;
+}
+
+.successTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 10px;
+}
+
+.successMsg {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.successBtn {
+  background: var(--primary, #FF7043);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}

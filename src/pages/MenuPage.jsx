@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../services/firebase'
 import { useCommerce } from '../hooks/useCommerce'
@@ -14,6 +14,7 @@ import MenuList from '../components/MenuList'
 import CartFooter from '../components/CartFooter'
 import BottomNav from '../components/BottomNav'
 import CategoryFilterBar from '../components/CategoryFilterBar'
+import DietaryFilterBar from '../components/DietaryFilterBar'
 import InlineSearchBar from '../components/InlineSearchBar'
 import CartModal from '../components/CartModal'
 import OrderConfirmModal from '../components/OrderConfirmModal'
@@ -21,6 +22,7 @@ import OrderSuccessModal from '../components/OrderSuccessModal'
 import PaymentModal from '../components/PaymentModal'
 import SideDrawer from '../components/SideDrawer'
 import WaiterModal from '../components/WaiterModal'
+import OfflineBanner from '../components/OfflineBanner'
 import OrdersView from './OrdersView'
 import ReservationsView from './ReservationsView'
 
@@ -39,30 +41,50 @@ export default function MenuPage() {
   const [successData,  setSuccessData]  = useState(null)
   const [waiterOpen,   setWaiterOpen]   = useState(false)
   const [paymentData,  setPaymentData]  = useState(null)   // { orderId, total }
-  const [activeOrdersCount, setActiveOrdersCount] = useState(0)
+  const [activeOrdersCount,  setActiveOrdersCount]  = useState(0)
+  const [activeOrderStatus,  setActiveOrderStatus]  = useState(null) // null | 'requested' | 'preparing' | 'ready'
+  const [dietFilters,        setDietFilters]        = useState(new Set())
+  const lastWaiterCallRef = useRef(0)  // timestamp del último llamado al mozo
 
-  // Badge: trackear pedidos activos en tiempo real
+  // Badge + ícono animado: trackear pedidos activos en tiempo real
   useEffect(() => {
     if (!commerceId) return
     try {
       const stored = JSON.parse(localStorage.getItem('feka_active_orders') || '[]')
       const mine = stored.filter(o => o.commerceId === commerceId)
-      if (!mine.length) { setActiveOrdersCount(0); return }
+      if (!mine.length) { setActiveOrdersCount(0); setActiveOrderStatus(null); return }
 
-      const counts = {}
+      const statuses = {}
+      const counts   = {}
+
+      function recalc() {
+        const vals = Object.values(counts)
+        setActiveOrdersCount(vals.reduce((a, b) => a + b, 0))
+        // Estado más urgente de todos los pedidos activos
+        const allStatuses = Object.values(statuses)
+        if (allStatuses.includes('ready'))     setActiveOrderStatus('ready')
+        else if (allStatuses.includes('preparing')) setActiveOrderStatus('preparing')
+        else if (allStatuses.includes('requested') || allStatuses.includes('pending'))
+                                               setActiveOrderStatus('requested')
+        else                                   setActiveOrderStatus(null)
+      }
+
       const unsubs = mine.map(({ id }) => {
         return onSnapshot(
           doc(db, 'feka_users', commerceId, 'orders', id),
           snap => {
             if (snap.exists()) {
-              const st = snap.data().status || ''
-              counts[id] = (st === 'requested' || st === 'preparing') ? 1 : 0
+              const d  = snap.data()
+              const st = d.status || ''
+              statuses[id] = st
+              counts[id]   = (st === 'requested' || st === 'preparing' || st === 'ready') ? 1 : 0
             } else {
-              counts[id] = 0
+              statuses[id] = ''
+              counts[id]   = 0
             }
-            setActiveOrdersCount(Object.values(counts).reduce((a, b) => a + b, 0))
+            recalc()
           },
-          () => { counts[id] = 0 }
+          () => { statuses[id] = ''; counts[id] = 0; recalc() }
         )
       })
       return () => unsubs.forEach(u => u())
@@ -87,6 +109,20 @@ export default function MenuPage() {
     if (searchOpen) setSearchQuery('')
   }
 
+  // Filtros dietarios
+  function toggleDietFilter(key) {
+    setDietFilters(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+  function clearDietFilters() { setDietFilters(new Set()) }
+
+  // ¿Algún producto tiene atributos dietarios? → mostrar barra solo si aplica
+  const hasDietaryProducts = products.some(p => p.dietary?.length > 0)
+
   function handleTab(tab) {
     if (tab === 'waiter') {
       if (!commerceId) return
@@ -100,10 +136,20 @@ export default function MenuPage() {
   }
 
   async function handleWaiterConfirm(message) {
+    // Cooldown de 30 segundos para evitar spam
+    const now = Date.now()
+    if (now - lastWaiterCallRef.current < 30000) {
+      const segsRestantes = Math.ceil((30000 - (now - lastWaiterCallRef.current)) / 1000)
+      showToast(`⏳ Esperá ${segsRestantes}s antes de llamar de nuevo`, 'error')
+      setWaiterOpen(false)
+      return
+    }
+    lastWaiterCallRef.current = now
     setWaiterOpen(false)
     try {
       await callWaiter({ commerceId, table, user, message })
       showToast('🙋‍♂️ ¡Mozo en camino!', 'success')
+      setActiveTab('orders')
     } catch (e) {
       showToast('No se pudo llamar al mozo', 'error')
     }
@@ -122,6 +168,11 @@ export default function MenuPage() {
     setCartOpen(false)
     setPaymentData(data)    // { orderId, table, total }
     setActiveOrdersCount(c => c + 1)
+  }
+
+  // "Pagar Ahora" desde la vista Mis Pedidos (el pedido ya existe)
+  function handlePayNowFromOrders(orderId, total) {
+    setPaymentData({ orderId, total })
   }
 
   function handleViewOrders() {
@@ -154,7 +205,9 @@ export default function MenuPage() {
       return (
         <OrdersView
           commerceId={commerceId}
+          settings={settings}
           onBack={() => setActiveTab('menu')}
+          onPayNow={handlePayNowFromOrders}
         />
       )
     }
@@ -171,10 +224,15 @@ export default function MenuPage() {
     // Menú (default)
     return (
       <>
-        {filterOpen && (
-          <CategoryFilterBar
-            categories={categories}
-            onSelect={() => setFilterOpen(false)}
+        <CategoryFilterBar
+          categories={categories}
+          onSelect={() => {}}
+        />
+        {filterOpen && hasDietaryProducts && (
+          <DietaryFilterBar
+            active={dietFilters}
+            onToggle={toggleDietFilter}
+            onClear={clearDietFilters}
           />
         )}
         {searchOpen && (
@@ -190,6 +248,7 @@ export default function MenuPage() {
           onAdd={addItem}
           searchQuery={searchQuery}
           commissionRate={commissionRate}
+          activeDietFilters={dietFilters}
         />
         <CartFooter onOpen={() => setCartOpen(true)} />
       </>
@@ -198,6 +257,7 @@ export default function MenuPage() {
 
   return (
     <div>
+      <OfflineBanner />
       <Header
         settings={settings}
         table={table}
@@ -209,7 +269,12 @@ export default function MenuPage() {
       {renderContent()}
 
       {/* Navegación inferior — siempre visible */}
-      <BottomNav active={activeTab} onTab={handleTab} activeOrdersCount={activeOrdersCount} />
+      <BottomNav
+        active={activeTab}
+        onTab={handleTab}
+        activeOrdersCount={activeOrdersCount}
+        activeOrderStatus={activeOrderStatus}
+      />
 
       {/* ── Modales / Drawer ── */}
       {drawerOpen && (
