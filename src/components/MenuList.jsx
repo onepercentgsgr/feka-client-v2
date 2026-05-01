@@ -35,7 +35,6 @@ function spawnFlyDot(originEl) {
   `
   document.body.appendChild(dot)
 
-  // destino: centro-derecho del bottom, donde está el ícono del carrito
   const endX = window.innerWidth  - 48
   const endY = window.innerHeight - 38
 
@@ -51,18 +50,46 @@ function spawnFlyDot(originEl) {
   setTimeout(() => dot.remove(), 620)
 }
 
-function ProductCard({ product, onAdd, rate }) {
+/** Chips de filtros dietarios del producto */
+const DIETARY_LABELS = {
+  vegan:        '🌱 Vegano',
+  vegetarian:   '🥗 Vegetariano',
+  gluten_free:  '🌾🚫 Sin TACC',
+  lactose_free: '🥛🚫 Sin lactosa',
+}
+
+function DietaryChips({ dietary }) {
+  if (!dietary?.length) return null
+  return (
+    <div className={styles.dietChips}>
+      {dietary.map(d => DIETARY_LABELS[d]
+        ? <span key={d} className={styles.dietChip}>{DIETARY_LABELS[d]}</span>
+        : null
+      )}
+    </div>
+  )
+}
+
+function ProductCard({ product, onAdd, rate, activeDietFilters }) {
   const [viewerUrl, setViewerUrl] = useState(null)
+  const [videoOpen, setVideoOpen]   = useState(false)
 
   const isAvailable = product.active !== false
     && product.available !== false
     && product.outOfStock !== true
 
   const hasImg      = !!product.imgUrl
+  const hasVideo    = !!product.videoUrl
   const hasVariants = product.hasVariations && Array.isArray(product.variations) && product.variations.length > 0
   const vStock      = product.variationStock || {}
+  const stock       = product.stock ?? null   // stock real si existe en el doc
 
   const displayPrice = applyRate(product.price || 0, rate)
+
+  // Badge de stock bajo (≤3 unidades)
+  const lowStockBadge = (stock !== null && stock > 0 && stock <= 3)
+    ? <div className={styles.lowStock}>⏳ Solo quedan {stock}</div>
+    : null
 
   const handleAdd = useCallback((e) => {
     spawnFlyDot(e.currentTarget)
@@ -83,12 +110,27 @@ function ProductCard({ product, onAdd, rate }) {
     })
   }, [product, rate, onAdd])
 
+  // Filtrado dietario: si hay filtros activos y el producto no coincide, ocultar
+  if (activeDietFilters && activeDietFilters.size > 0) {
+    const productDietary = new Set(product.dietary || [])
+    const matches = [...activeDietFilters].every(f => productDietary.has(f))
+    if (!matches) return null
+  }
+
   return (
     <>
       <div className={styles.card}>
 
-        {/* Imagen 75×75 con badge de zoom */}
-        {hasImg && (
+        {/* Media: video si existe, si no imagen */}
+        {hasVideo ? (
+          <div className={styles.cardImg} onClick={() => setVideoOpen(true)}>
+            {hasImg
+              ? <img src={product.imgUrl} alt={product.name} loading="eager" />
+              : <div className={styles.videoPlaceholder}>▶</div>
+            }
+            <span className={styles.playBadge}>▶</span>
+          </div>
+        ) : hasImg ? (
           <div
             className={styles.cardImg}
             onClick={() => setViewerUrl(product.imgUrl)}
@@ -98,7 +140,7 @@ function ProductCard({ product, onAdd, rate }) {
             <img src={product.imgUrl} alt={product.name} loading="eager" />
             <span className={styles.zoomBadge}>🔍</span>
           </div>
-        )}
+        ) : null}
 
         {/* Nombre + descripción en el centro */}
         <div className={styles.cardBody}>
@@ -107,12 +149,20 @@ function ProductCard({ product, onAdd, rate }) {
             <p className={styles.cardDesc}>{product.description}</p>
           )}
 
+          {/* Chips dietarios (visibles siempre si los tiene) */}
+          <DietaryChips dietary={product.dietary} />
+
+          {/* Badge stock bajo */}
+          {lowStockBadge}
+
           {/* Variantes inline */}
           {hasVariants && isAvailable && (
             <div className={styles.variants}>
               {product.variations.map(v => {
                 const vPrice = applyRate(v.price || 0, rate)
                 const vOut   = vStock[v.name]?.outOfStock === true
+                const vStock2 = v.stock ?? null
+                const vLow   = vStock2 !== null && vStock2 > 0 && vStock2 <= 3
                 return vOut ? (
                   <span key={v.name} className={styles.variantDisabled}>
                     {v.name} — Sin stock
@@ -124,6 +174,7 @@ function ProductCard({ product, onAdd, rate }) {
                     onClick={(e) => handleVariantAdd(v, e)}
                   >
                     {v.name} ${vPrice.toLocaleString('es-AR')}
+                    {vLow && <span className={styles.variantLowStock}> ⏳{vStock2}</span>}
                   </button>
                 )
               })}
@@ -153,6 +204,22 @@ function ProductCard({ product, onAdd, rate }) {
       {viewerUrl && (
         <ImageViewer url={viewerUrl} onClose={() => setViewerUrl(null)} />
       )}
+
+      {/* Viewer de video a pantalla completa */}
+      {videoOpen && (
+        <div className={styles.videoOverlay} onClick={() => setVideoOpen(false)}>
+          <video
+            src={product.videoUrl}
+            autoPlay
+            loop
+            controls
+            playsInline
+            className={styles.videoFull}
+            onClick={e => e.stopPropagation()}
+          />
+          <button className={styles.videoCloseBtn} onClick={() => setVideoOpen(false)}>✕</button>
+        </div>
+      )}
     </>
   )
 }
@@ -161,11 +228,11 @@ function sortByOrder(arr) {
   return [...arr].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
 }
 
-export default function MenuList({ categories, products, onAdd, searchQuery = '', commissionRate = 0 }) {
+export default function MenuList({ categories, products, onAdd, searchQuery = '', commissionRate = 0, activeDietFilters }) {
   const rate = commissionRate
 
   const activeProducts = products.filter(
-    p => p.active !== false && p.available !== false && p.outOfStock !== true
+    p => p.active !== false && p.available !== false
   )
 
   if (searchQuery.trim()) {
@@ -180,7 +247,15 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
     return (
       <div className={styles.container}>
         <div className={styles.grid}>
-          {filtered.map(p => <ProductCard key={p.id} product={p} onAdd={onAdd} rate={rate} />)}
+          {filtered.map(p => (
+            <ProductCard
+              key={p.id}
+              product={p}
+              onAdd={onAdd}
+              rate={rate}
+              activeDietFilters={activeDietFilters}
+            />
+          ))}
         </div>
       </div>
     )
@@ -203,7 +278,13 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
               <h2 className={styles.categoryTitle}>{cat.name}</h2>
               <div className={styles.grid}>
                 {catProducts.map(p => (
-                  <ProductCard key={p.id} product={p} onAdd={onAdd} rate={rate} />
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onAdd={onAdd}
+                    rate={rate}
+                    activeDietFilters={activeDietFilters}
+                  />
                 ))}
               </div>
             </section>
@@ -217,7 +298,13 @@ export default function MenuList({ categories, products, onAdd, searchQuery = ''
     <div className={styles.container}>
       <div className={styles.grid}>
         {sortByOrder(activeProducts).map(p => (
-          <ProductCard key={p.id} product={p} onAdd={onAdd} rate={rate} />
+          <ProductCard
+            key={p.id}
+            product={p}
+            onAdd={onAdd}
+            rate={rate}
+            activeDietFilters={activeDietFilters}
+          />
         ))}
       </div>
     </div>

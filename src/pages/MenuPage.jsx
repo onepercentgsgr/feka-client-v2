@@ -224,10 +224,6 @@ export default function MenuPage() {
     // Menú (default)
     return (
       <>
-        <CategoryFilterBar
-          categories={categories}
-          onSelect={() => {}}
-        />
         {filterOpen && hasDietaryProducts && (
           <DietaryFilterBar
             active={dietFilters}

@@ -1,0 +1,57 @@
+.bar {
+  position: sticky;
+  top: 56px;
+  z-index: 199;
+  background: rgba(255, 245, 235, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 112, 67, 0.12);
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bar::-webkit-scrollbar { display: none; }
+
+.btn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1.5px solid rgba(255, 112, 67, 0.25);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn:active { opacity: 0.75; }
+
+.btnActive {
+  border-color: #4CAF50;
+  background: #4CAF50;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.3);
+}
+
+.clearBtn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1.5px solid rgba(239,83,80,0.4);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.6);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #EF5350;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.clearBtn:active { opacity: 0.75; }

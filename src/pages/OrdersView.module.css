@@ -1,0 +1,425 @@
+/* ── OrdersView ── */
+
+.container {
+  padding: 16px 16px 160px;
+  min-height: 100vh;
+}
+
+/* ── Top bar ── */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.newBtn {
+  background: var(--primary, #FF5A26);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.newBtn:active { opacity: 0.8; }
+
+/* ── Filtros por estado ── */
+.filterTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+.filterTabs::-webkit-scrollbar { display: none; }
+
+.filterTab {
+  flex-shrink: 0;
+  background: #f5f5f5;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.filterTabActive {
+  background: var(--primary, #FF7043);
+  border-color: var(--primary, #FF7043);
+  color: #fff;
+}
+
+.filterEmpty {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.88rem;
+  padding: 30px 0;
+}
+
+/* ── Lista ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Tarjeta ── */
+.card {
+  background: white;
+  border-radius: 12px;
+  border-left: 5px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  padding: 15px;
+}
+
+.loading {
+  color: #aaa;
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* ── Card header ── */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.orderTitle {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.orderDate {
+  font-size: 0.78rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.cardHeaderRight {
+  text-align: right;
+}
+
+.statusBadge {
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.payMethod {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.payGray   { color: #9E9E9E; }
+.payGreen  { color: #2E7D32; }
+.payOrange { color: #FFA726; font-weight: 600; }
+.payPurple { color: #7C4DFF; font-weight: 600; }
+
+/* ── Progress bar ── */
+.progress {
+  display: flex;
+  align-items: center;
+  margin: 10px 0 14px;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+
+.dotReady {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.18); }
+}
+
+.dotLabel {
+  font-size: 0.62rem;
+  font-weight: 600;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.line {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  margin: 0 3px;
+  margin-bottom: 14px; /* align with dots, not labels */
+}
+
+/* ── Countdown banner (preparando) ── */
+.countdownBanner {
+  margin: 0 0 10px;
+  color: #E65100;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: #FFF3E0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #FFCC80;
+}
+
+/* ── Ready banner ── */
+.readyBanner {
+  margin: 0 0 12px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border: 2px solid #FFA726;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.readyIcon  { font-size: 1.4rem; margin-bottom: 4px; }
+.readyTitle { color: #E65100; font-weight: 800; font-size: 1rem; margin-bottom: 2px; }
+.readySub   { color: #F57C00; font-size: 0.82rem; font-weight: 500; }
+
+/* ── Partial banner ── */
+.partialBanner {
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border: 1.5px solid #FFA726;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.bannerTitle { font-weight: 700; color: #E65100; font-size: 0.88rem; margin-bottom: 3px; }
+.bannerSub   { color: #F57C00; font-size: 0.82rem; line-height: 1.4; }
+.bannerTip   { color: #FF8F00; font-size: 0.8rem; margin-top: 5px; font-weight: 600; }
+
+/* ── Refund banners ── */
+.refundGreenBanner {
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border: 1.5px solid #43A047;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.refundGreenBanner .bannerTitle { color: #1B5E20; }
+.refundGreenBanner .bannerSub   { color: #2E7D32; font-size: 0.82rem; }
+
+.refundRedBanner {
+  background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+  border: 1.5px solid #C62828;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.refundRedBanner .bannerTitle { color: #B71C1C; }
+.refundRedBanner .bannerSub   { color: #C62828; font-size: 0.82rem; }
+
+/* ── Items list ── */
+.itemsList {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  border-top: 1px dashed #eee;
+  padding-top: 10px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.itemName  { flex: 1; }
+.itemPrice { color: #4CAF50; font-weight: 600; }
+
+.itemRemoved {
+  opacity: 0.65;
+}
+.itemRemoved .itemName  { text-decoration: line-through; color: #ef5350; }
+.itemRemoved .itemPrice { text-decoration: line-through; color: #ef9a9a; font-size: 0.85rem; }
+
+/* ── Descuento ── */
+.discountRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  color: #FF7043;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  background: rgba(255, 112, 67, 0.07);
+  border-radius: 8px;
+}
+
+/* ── Verification box ── */
+.verifyBox {
+  background: #FFF8E1;
+  border: 1px solid #FFE082;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+.verifyTitle {
+  font-weight: 700;
+  color: #F57C00;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.verifyRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  color: #666;
+}
+.verifyGreen { color: #2E7D32; }
+.verifyTotal {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0 2px;
+  margin-top: 4px;
+  border-top: 1px dashed #FFE082;
+  color: #333;
+  font-weight: 800;
+}
+
+/* ── Total row ── */
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #333;
+  margin-top: 2px;
+}
+
+/* ── Notes box ── */
+.notesBox {
+  margin-top: 12px;
+  background: rgba(255, 152, 0, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 152, 0, 0.1);
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.notesLabel { font-weight: 700; color: #F57C00; }
+.notesText  { font-style: italic; }
+
+/* ── Action buttons ── */
+.btnPay {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 6px rgba(76, 175, 80, 0.25);
+  transition: opacity 0.15s;
+}
+.btnPay:active { opacity: 0.85; }
+
+.btnCancel {
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid #ef5350;
+  background: white;
+  color: #ef5350;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.btnCancel:active { background: #fff5f5; }
+
+.btnReceipt {
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid rgba(66, 165, 245, 0.4);
+  background: rgba(66, 165, 245, 0.08);
+  color: #1976D2;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.btnReceipt:active { opacity: 0.75; }
+
+/* ── Empty state ── */
+.empty {
+  text-align: center;
+  padding: 60px 20px 0;
+  color: #999;
+}
+.emptyIcon { font-size: 2.5rem; margin-bottom: 10px; }
+.emptyText { font-size: 0.9rem; margin: 0; }
+.emptyBtn {
+  margin-top: 16px;
+  background: var(--primary, #FF5A26);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.emptyBtn:active { opacity: 0.8; }
